@@ -12,7 +12,7 @@ public interface UserRepository {
 
     Optional<User> getUserById(long userId);
 
-    Optional<User> getUserByEmail(String email);
+    boolean isUsedEmail(String email);
 
     void deleteUser(long userId);
 }

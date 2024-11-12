@@ -9,25 +9,22 @@ import ru.practicum.shareit.user.mapper.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserDtoMapper userDtoMapper;
 
     @Override
     public UserDto addUser(UserDto userDto) {
-        User addedUser = userDtoMapper.toUser(userDto);
+        User addedUser = UserDtoMapper.toUser(userDto);
         checkEmailUnique(addedUser);
-        return userDtoMapper.toUserDto(userRepository.addUser(addedUser));
+        return UserDtoMapper.toUserDto(userRepository.addUser(addedUser));
     }
 
     @Override
     public UserDto updateUser(long userId, UserDto userDto) {
         User oldUser = getUserById(userId);
-        User updatedUser = userDtoMapper.toUser(userDto);
+        User updatedUser = UserDtoMapper.toUser(userDto);
         updatedUser.setId(userId);
         checkEmailUnique(updatedUser);
         String email = updatedUser.getEmail();
@@ -38,12 +35,12 @@ public class UserServiceImpl implements UserService {
         if (name == null || name.isBlank()) {
             updatedUser.setName(oldUser.getName());
         }
-        return userDtoMapper.toUserDto(userRepository.updateUser(updatedUser));
+        return UserDtoMapper.toUserDto(userRepository.updateUser(updatedUser));
     }
 
     @Override
     public UserDto getUserDtoById(long userId) {
-        return userDtoMapper.toUserDto(getUserById(userId));
+        return UserDtoMapper.toUserDto(getUserById(userId));
     }
 
     @Override
@@ -57,20 +54,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с id: " + userId + " не найден"));
     }
 
-    /**
-     * This method checks the uniqueness of the email.
-     * The verification method uses the values of the fields of the passed entity.
-     * A user with an initialized id field is passed for verification.
-     * This is very important for correct verification.
-     * Since the identity of the email address is determined by the id.
-     *
-     * @throws ConflictException if the uniqueness check fails
-     */
     private void checkEmailUnique(User user) {
         String email = user.getEmail();
         if (email != null && !email.isBlank()) {
-            Optional<User> foundUser = userRepository.getUserByEmail(email);
-            if (foundUser.isPresent() && foundUser.get().getId() != user.getId()) {
+            if (userRepository.isUsedEmail(email)) {
                 throw new ConflictException("Переданный email уже занят другим пользователем");
             }
         }

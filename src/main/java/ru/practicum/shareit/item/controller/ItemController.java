@@ -15,15 +15,16 @@ import java.util.List;
 @Slf4j
 public class ItemController {
     private final ItemService itemService;
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") long userId, @Validated @RequestBody ItemDto itemDto) {
+    public ItemDto createItem(@RequestHeader(USER_ID_HEADER) long userId, @Validated @RequestBody ItemDto itemDto) {
         log.info("Поступил запрос на создание вещи от пользователя с id: {}, с телом: {}", userId, itemDto);
         return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
+    public ItemDto updateItem(@RequestHeader(USER_ID_HEADER) long userId, @PathVariable long itemId,
                               @RequestBody ItemDto itemDto) {
         log.info("Поступил запрос на обновление вещи с id: {}, от пользователя с id: {}, с телом: {}", itemId, userId,
                 itemDto);
@@ -37,7 +38,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getListItemDtoByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getListItemDtoByUserId(@RequestHeader(USER_ID_HEADER) long userId) {
         log.info("Поступил запрос на получение списка вещей пользователя с id: {}", userId);
         return itemService.getListItemDtoByUserId(userId);
     }

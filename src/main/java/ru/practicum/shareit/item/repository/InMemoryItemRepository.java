@@ -5,7 +5,6 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,16 +28,12 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public List<Item> getListItemBySubstring(String text) {
         String textLowerCase = text.toLowerCase();
-        List<Item> foundItems = new ArrayList<>();
-        for (Item item : items.values()) {
+        return items.values().stream().filter(item -> {
             String nameLowerCase = item.getName().toLowerCase();
             String descriptionLowerCase = item.getDescription().toLowerCase();
-            if ((nameLowerCase.contains(textLowerCase) || descriptionLowerCase.contains(textLowerCase))
-                    && item.getAvailable()) {
-                foundItems.add(item);
-            }
-        }
-        return foundItems;
+            return (nameLowerCase.contains(textLowerCase) || descriptionLowerCase.contains(textLowerCase))
+                    && item.getAvailable();
+        }).toList();
     }
 
     @Override

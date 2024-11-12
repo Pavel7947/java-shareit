@@ -16,18 +16,17 @@ import java.util.List;
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
-    private final ItemDtoMapper itemDtoMapper;
 
     @Override
     public ItemDto getItemDtoById(long itemId) {
-        return itemDtoMapper.toItemDto(itemRepository.getItemById(itemId)
+        return ItemDtoMapper.toItemDto(itemRepository.getItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("Вещь с id: " + itemId + " не найдена")));
     }
 
     @Override
     public List<ItemDto> getListItemDtoByUserId(long userId) {
         checkExistenceUser(userId);
-        return getListItemByUserId(userId).stream().map(itemDtoMapper::toItemDto).toList();
+        return getListItemByUserId(userId).stream().map(ItemDtoMapper::toItemDto).toList();
     }
 
     @Override
@@ -35,13 +34,13 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return List.of();
         }
-        return itemRepository.getListItemBySubstring(text).stream().map(itemDtoMapper::toItemDto).toList();
+        return itemRepository.getListItemBySubstring(text).stream().map(ItemDtoMapper::toItemDto).toList();
     }
 
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
         checkExistenceUser(userId);
-        return itemDtoMapper.toItemDto(itemRepository.addItem(userId, itemDtoMapper.toItem(itemDto)));
+        return ItemDtoMapper.toItemDto(itemRepository.addItem(userId, ItemDtoMapper.toItem(itemDto)));
     }
 
     @Override
@@ -49,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
         checkExistenceUser(userId);
         Item oldItem = getListItemByUserId(userId).stream().filter(item -> item.getId() == itemId).findFirst()
                 .orElseThrow(() -> new NotFoundException("У пользователя с id: " + userId + " нет вещи с id: " + itemId));
-        Item newItem = itemDtoMapper.toItem(itemDto);
+        Item newItem = ItemDtoMapper.toItem(itemDto);
         String name = newItem.getName();
         if (name == null || name.isBlank()) {
             newItem.setName(oldItem.getName());
@@ -61,7 +60,7 @@ public class ItemServiceImpl implements ItemService {
         if (newItem.getAvailable() == null) {
             newItem.setAvailable(oldItem.getAvailable());
         }
-        return itemDtoMapper.toItemDto(itemRepository.updateItem(itemId, newItem));
+        return ItemDtoMapper.toItemDto(itemRepository.updateItem(itemId, newItem));
     }
 
     private void checkExistenceUser(long userId) {
