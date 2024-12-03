@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     public UserDto addUser(UserDto userDto) {
         User addedUser = UserDtoMapper.toUser(userDto);
         checkEmailUnique(addedUser);
-        return UserDtoMapper.toUserDto(userRepository.addUser(addedUser));
+        return UserDtoMapper.toUserDto(userRepository.save(addedUser));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         if (name == null || name.isBlank()) {
             updatedUser.setName(oldUser.getName());
         }
-        return UserDtoMapper.toUserDto(userRepository.updateUser(updatedUser));
+        return UserDtoMapper.toUserDto(userRepository.save(updatedUser));
     }
 
     @Override
@@ -46,18 +46,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(long userId) {
         getUserById(userId);
-        userRepository.deleteUser(userId);
+        userRepository.deleteById(userId);
     }
 
     private User getUserById(long userId) {
-        return userRepository.getUserById(userId)
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id: " + userId + " не найден"));
     }
 
     private void checkEmailUnique(User user) {
         String email = user.getEmail();
         if (email != null && !email.isBlank()) {
-            if (userRepository.isUsedEmail(email)) {
+            if (userRepository.existsByEmail(email)) {
                 throw new ConflictException("Переданный email уже занят другим пользователем");
             }
         }
