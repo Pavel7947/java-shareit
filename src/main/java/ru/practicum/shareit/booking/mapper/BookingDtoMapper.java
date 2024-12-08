@@ -14,6 +14,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -41,8 +42,12 @@ public final class BookingDtoMapper {
                 .build();
     }
 
-    public static List<BookingDto> toBookingDto(List<Booking> bookings) {
-        return bookings.stream().map(BookingDtoMapper::toBookingDto).toList();
+    public static List<BookingDto> toBookingDto(Iterable<Booking> bookings) {
+        List<BookingDto> dtos = new ArrayList<>();
+        for (Booking booking : bookings) {
+            dtos.add(toBookingDto(booking));
+        }
+        return dtos;
     }
 
     public static BookingDtoOnlyDates toOnlyDatesBookingDto(Booking booking) {

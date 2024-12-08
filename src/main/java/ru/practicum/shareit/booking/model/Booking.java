@@ -1,10 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -12,8 +9,10 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "bookings")
-@Data
 @Builder(toBuilder = true)
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Booking {

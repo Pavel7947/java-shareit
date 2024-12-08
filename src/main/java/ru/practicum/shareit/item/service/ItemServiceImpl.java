@@ -1,10 +1,13 @@
 package ru.practicum.shareit.item.service;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDtoOnlyDates;
 import ru.practicum.shareit.booking.mapper.BookingDtoMapper;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.QBooking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -29,6 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
@@ -40,11 +44,11 @@ public class ItemServiceImpl implements ItemService {
     public ItemDtoExtendsResp getItemDtoById(long itemId) {
         Item item = getItemById(itemId);
         List<String> comments = commentRepository.findAllByItemId(itemId).stream().map(Comment::getText).toList();
-        List<Booking> bookings = bookingRepository.findAllByItemIdAndStartAfter(itemId, Instant.now());
+        List<Booking> bookings = bookingRepository.findAllByItemIdAndStartAfter(itemId, Instant.now()).stream()
+                .sorted(Comparator.comparing(Booking::getStart)).toList();
         BookingDtoOnlyDates nextBooking = null;
         BookingDtoOnlyDates lastBooking = null;
         if (!bookings.isEmpty()) {
-            bookings.sort(Comparator.comparing(Booking::getStart));
             nextBooking = BookingDtoMapper.toOnlyDatesBookingDto(bookings.getFirst());
             lastBooking = BookingDtoMapper.toOnlyDatesBookingDto(bookings.getLast());
         }
@@ -84,12 +88,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getListItemDtoBySubstring(String text) {
-        if (text.isBlank()) {
-            return List.of();
-        }
         return itemRepository.searchBySubstring(text).stream().map(ItemDtoMapper::toItemDto).toList();
     }
 
+    @Transactional
     @Override
     public ItemDto addItem(long userId, ItemDto itemDto) {
         User owner = getUserById(userId);
@@ -97,6 +99,7 @@ public class ItemServiceImpl implements ItemService {
         return ItemDtoMapper.toItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     @Override
     public ItemDto updateItem(long ownerId, long itemId, ItemDto itemDto) {
         User owner = getUserById(ownerId);
@@ -118,14 +121,18 @@ public class ItemServiceImpl implements ItemService {
         return ItemDtoMapper.toItemDto(itemRepository.save(newItem));
     }
 
+    @Transactional
     @Override
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
-        User author = getUserById(userId);
+        User user = getUserById(userId);
         Item item = getItemById(itemId);
-        bookingRepository.findByBookerIdAndItemIdAndEndBefore(userId, itemId, Instant.now())
-                .orElseThrow(() -> new BadRequestException("Пользователь не может оставлять комментарий к вещи которую  не брал в аренду"));
-
-        return CommentDtoMapper.toCommentDto(commentRepository.save(CommentDtoMapper.toNewComment(commentDto, author, item)));
+        BooleanExpression condition = QBooking.booking.booker.eq(user)
+                .and(QBooking.booking.item.eq(item))
+                .and(QBooking.booking.end.loe(Instant.now()));
+        if (!bookingRepository.exists(condition)) {
+            throw new BadRequestException("Пользователь не может оставлять комментарий к вещи которую  не брал в аренду");
+        }
+        return CommentDtoMapper.toCommentDto(commentRepository.save(CommentDtoMapper.toNewComment(commentDto, user, item)));
     }
 
     private User getUserById(long userId) {

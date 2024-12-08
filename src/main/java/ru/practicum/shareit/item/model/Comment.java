@@ -1,17 +1,16 @@
 package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.Instant;
 
 @Entity
 @Table(name = "comments")
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,6 +19,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private long id;
+    @Column(nullable = false, length = 500)
     private String text;
     @ManyToOne
     @JoinColumn(name = "item_id")
