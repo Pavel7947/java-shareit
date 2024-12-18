@@ -1,32 +1,54 @@
-INSERT INTO users (user_id, email, name)
-values (1, '22@mail.ru', 'name');
+INSERT INTO users (email, name) --id 1
+values ('1@mail.ru', 'name');
 
-INSERT INTO users (user_id, email, name)
-values (2, '23@mail.ru', 'pasha');
+INSERT INTO users (email, name) --id 2
+values ('2@mail.ru', 'pasha');
 
-INSERT INTO users (user_id, email, name)
-values (3, '24@mail.ru', 'dasha');
+INSERT INTO users (email, name) --id 3
+values ('3@mail.ru', 'dasha');
 
-INSERT INTO users (user_id, email, name)
-values (4, '26@mail.ru', 'sasha');
+INSERT INTO users (email, name) --id 4
+values ('4@mail.ru', 'sasha');
 
-INSERT INTO items (item_id, name, description, is_available, owner_id)
-values(1, 'drill', 'good drill', true, 1);
 
-INSERT INTO items (item_id, name, description, is_available, owner_id)
-values(2, 'grinder', 'good grinder', true, 2);
 
-INSERT INTO items (item_id, name, description, is_available, owner_id)
-values(3, 'mallet', 'good mallet', false, 1);
+INSERT INTO requests(description, requester_id, create_date) --id 1
+values('drill request', 3,  NOW());
 
-INSERT INTO bookings (booking_id, start_date, end_date, item_id, booker_id, status)
-values(1, '2024-12-10T9:11:56', '2024-12-11T9:11:56', 1, 3, 'APPROVED');
+INSERT INTO requests(description, requester_id, create_date) --id 2
+values('mallet request', 3, NOW() -1);
 
-INSERT INTO bookings (booking_id, start_date, end_date, item_id, booker_id, status)
-values(2, '2024-12-12T9:11:56', '2024-12-13T9:11:56', 1, 3, 'APPROVED');
+INSERT INTO requests(description, requester_id, create_date) --id 3
+values('grinder request', 4, NOW() -1);
 
-INSERT INTO requests(request_id, description, requester_id, create_date)
-values(1, 'drill request', 3,  '2024-12-12T9:11:56');
+INSERT INTO requests(description, requester_id, create_date) --id 3
+values('axe request', 4, NOW() -1);
 
-INSERT INTO requests(request_id, description, requester_id, create_date)
-values(2, 'mallet request', 3, '2024-12-13T9:11:56');
+
+
+INSERT INTO items (name, description, is_available, owner_id) --id 1
+values('drill', 'good drill', true, 1);
+
+INSERT INTO items (name, description, is_available, owner_id) --id 3
+values('mallet', 'good mallet', false, 1);
+
+INSERT INTO items (name, description, is_available, owner_id, request_id) --id 4
+values('axe', 'good axe', true, 1, 3);
+
+INSERT INTO items (name, description, is_available, owner_id) --id 2
+values('grinder', 'good grinder', true, 2);
+
+
+
+INSERT INTO bookings (start_date, end_date, item_id, booker_id, status) --id 1
+values( NOW() - 6, NOW() - 5, 1, 3, 'APPROVED');
+
+INSERT INTO bookings (start_date, end_date, item_id, booker_id, status) --id 2
+values(NOW() + 6, NOW() + 7, 1, 3, 'WAITING');
+
+INSERT INTO bookings (start_date, end_date, item_id, booker_id, status) --id 3
+values(NOW() - 1, NOW() + 1, 1, 3, 'WAITING');
+
+INSERT INTO bookings (start_date, end_date, item_id, booker_id, status) --id 4
+values(NOW() + 4, NOW() + 5, 1, 3, 'APPROVED');
+
