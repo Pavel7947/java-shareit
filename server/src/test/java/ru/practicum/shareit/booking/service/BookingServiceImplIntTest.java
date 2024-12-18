@@ -28,6 +28,7 @@ class BookingServiceImplIntTest {
     private static final long USER_ID_NOT_HAVING_BOOKINGS = 2; // This user does not have bookings
     private static final long USER_ID_NOT_HAVING_ITEMS = 3; // This user does not have items
     private static final long ITEM_ID_HAVING_TWO_BOOKINGS = 1; //This item having two bookings
+
     @Test
     void getAllUserBooking_WhenStateIsEqualAll_thenReturnBooking() {
         List<BookingDto> bookings = bookingService.getAllUserBooking(BOOKER_ID, StateBooking.ALL);
