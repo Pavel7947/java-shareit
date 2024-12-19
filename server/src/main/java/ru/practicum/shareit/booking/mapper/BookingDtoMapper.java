@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoAddRequest;
 import ru.practicum.shareit.booking.dto.BookingDtoOnlyDates;
@@ -17,10 +16,10 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public final class BookingDtoMapper {
 
-    public static Booking toBooking(BookingDtoAddRequest bookingDto, Item item, User booker, StatusBooking statusBooking) {
+    public Booking toBooking(BookingDtoAddRequest bookingDto, Item item, User booker, StatusBooking statusBooking) {
         return Booking.builder()
                 .id(bookingDto.getId())
                 .start(bookingDto.getStart().atZone(ZoneId.systemDefault()).toInstant())
@@ -31,7 +30,7 @@ public final class BookingDtoMapper {
                 .build();
     }
 
-    public static BookingDto toBookingDto(Booking booking) {
+    public BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
                 .start(LocalDateTime.ofInstant(booking.getStart(), ZoneId.systemDefault()))
@@ -42,7 +41,7 @@ public final class BookingDtoMapper {
                 .build();
     }
 
-    public static List<BookingDto> toBookingDto(Iterable<Booking> bookings) {
+    public List<BookingDto> toBookingDto(Iterable<Booking> bookings) {
         List<BookingDto> dtos = new ArrayList<>();
         for (Booking booking : bookings) {
             dtos.add(toBookingDto(booking));
@@ -50,7 +49,7 @@ public final class BookingDtoMapper {
         return dtos;
     }
 
-    public static BookingDtoOnlyDates toOnlyDatesBookingDto(Booking booking) {
+    public BookingDtoOnlyDates toOnlyDatesBookingDto(Booking booking) {
         return BookingDtoOnlyDates.builder()
                 .start(LocalDateTime.ofInstant(booking.getStart(), ZoneId.systemDefault()))
                 .end(LocalDateTime.ofInstant(booking.getEnd(), ZoneId.systemDefault()))

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,8 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 public class ItemRequestController {
     private final ItemRequestClient requestClient;
     private static final String NEGATIVE_REQUEST_ID_MESSAGE = "id запроса не может быть отрицательным";
+    private static final String NEGATIVE_FROM_PARAM_MESSAGE = "Параметр запроса from не может быть отрицательным числом";
+    private static final String NO_POSITIVE_SIZE_PARAM_MASSAGE = "Парметр запроса size должен быть положителным числом";
 
     @PostMapping
     public ResponseEntity<Object> addRequest(@PositiveOrZero(message = CommonConstants.NEGATIVE_USER_ID_MESSAGE)
@@ -44,8 +47,12 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequests(@PositiveOrZero(message = CommonConstants.NEGATIVE_USER_ID_MESSAGE)
-                                                 @RequestHeader(CommonConstants.USER_ID_HEADER) long userId) {
+                                                 @RequestHeader(CommonConstants.USER_ID_HEADER) long userId,
+                                                 @PositiveOrZero(message = NEGATIVE_FROM_PARAM_MESSAGE)
+                                                 @RequestParam(defaultValue = "0") int from,
+                                                 @Positive(message = NO_POSITIVE_SIZE_PARAM_MASSAGE)
+                                                 @RequestParam(defaultValue = "20") int size) {
         log.info("Поступил запрос на получение всех ItemRequest созданных другими пользователями");
-        return requestClient.getAllRequests(userId);
+        return requestClient.getAllRequests(userId, from, size);
     }
 }

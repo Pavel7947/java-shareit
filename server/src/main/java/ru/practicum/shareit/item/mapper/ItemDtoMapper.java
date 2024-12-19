@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.booking.dto.BookingDtoOnlyDates;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoExtendsResp;
@@ -12,10 +11,10 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@UtilityClass
 public final class ItemDtoMapper {
 
-    public static ItemDto toItemDto(Item item) {
+    public ItemDto toItemDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -24,8 +23,8 @@ public final class ItemDtoMapper {
                 .build();
     }
 
-    public static ItemDtoExtendsResp toItemDtoExtendsResp(Item item, BookingDtoOnlyDates nextBooking,
-                                                          BookingDtoOnlyDates lastBooking, List<String> comments) {
+    public ItemDtoExtendsResp toItemDtoExtendsResp(Item item, BookingDtoOnlyDates nextBooking,
+                                                   BookingDtoOnlyDates lastBooking, List<String> comments) {
         return ItemDtoExtendsResp.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -38,7 +37,7 @@ public final class ItemDtoMapper {
     }
 
 
-    public static Item toNewItem(ItemDto itemDto, User owner, ItemRequest request) {
+    public Item toNewItem(ItemDto itemDto, User owner, ItemRequest request) {
         return Item.builder()
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
@@ -48,7 +47,7 @@ public final class ItemDtoMapper {
                 .build();
     }
 
-    public static ItemDtoForItemRequest toItemDtoForItemRequest(Item item) {
+    public ItemDtoForItemRequest toItemDtoForItemRequest(Item item) {
         return ItemDtoForItemRequest.builder()
                 .itemId(item.getId())
                 .ownerId(item.getOwner().getId())
@@ -56,7 +55,7 @@ public final class ItemDtoMapper {
                 .build();
     }
 
-    public static List<ItemDtoForItemRequest> toItemDtoForItemRequest(List<Item> items) {
+    public List<ItemDtoForItemRequest> toItemDtoForItemRequest(List<Item> items) {
         return items.stream().map(ItemDtoMapper::toItemDtoForItemRequest).toList();
     }
 }

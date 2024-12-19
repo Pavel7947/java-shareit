@@ -38,8 +38,9 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<ItemRequestDto> getAllRequests(@RequestHeader(CommonConstants.USER_ID_HEADER) long userId) {
+    public List<ItemRequestDto> getAllRequests(@RequestHeader(CommonConstants.USER_ID_HEADER) long userId,
+                                               @RequestParam int from, @RequestParam int size) {
         log.info("Поступил запрос на получение всех ItemRequest созданных другими пользователями");
-        return requestService.getAllRequests(userId);
+        return requestService.getAllRequests(userId, from, size);
     }
 }

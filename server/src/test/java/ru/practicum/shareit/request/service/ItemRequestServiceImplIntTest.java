@@ -61,7 +61,7 @@ class ItemRequestServiceImplIntTest {
 
     @Test
     void getAllRequest_whenInvokedMethod_thenReturnAllRequest() {
-        List<ItemRequestDto> requests = requestService.getAllRequests(REQUESTER_ID);
+        List<ItemRequestDto> requests = requestService.getAllRequests(REQUESTER_ID, 0, 20);
 
         assertFalse(requests.isEmpty());
         assertTrue(requests.size() < NUMBER_ALL_REQUESTS);

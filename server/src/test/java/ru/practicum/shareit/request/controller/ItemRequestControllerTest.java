@@ -90,8 +90,8 @@ class ItemRequestControllerTest {
 
     @Test
     void getAllRequests_whenInvoked_thenReturnListItemRequestDto() throws Exception {
-        when(requestService.getAllRequests(1)).thenReturn(List.of(itemRequestDto));
-        mvc.perform(get("/requests/all")
+        when(requestService.getAllRequests(1, 0, 20)).thenReturn(List.of(itemRequestDto));
+        mvc.perform(get("/requests/all?from=0&size=20")
                         .header(USER_ID_HEADER, 1)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .accept(MediaType.APPLICATION_JSON))
